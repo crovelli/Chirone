@@ -1,14 +1,18 @@
 {
+  /// Calibration measurements taken in lab - standalone
+
   gStyle->SetOptStat(0);
 
   // -----------------------------------------------------------
   // CALIBRAZIONE 
 
+  /*
   // misure prese con viti -> probabilmente poco affidabili (C+E)
   float weight[8]  = { 13.9, 13.9+5.5, 13.9+2.*5.5, 13.9+3.*5.5, 13.9+4.*5.5, 13.9+5.*5.5, 13.9+6.*5.5, 13.9+7.*5.5 };
   float voltageA[8] = { 1.12,  1.18,  1.20,  1.43,  1.44,  1.47,  1.55,  1.54 }; 
   float voltageB[8] = { 1.141, 1.248, 1.258, 1.391, 1.504, 1.600, 1.674, 1.668 };
   float voltageC[8] = { 1.215, 1.254, 1.371, 1.383, 1.526, 1.670, 1.540, 1.604 };
+  */
 
   // misure prese con oggetti piu' pesanti, temperatura 21.8 gradi (C+E)
   float weight2[9]   = { 13.9, 13.9+8.5, 13.9+30.5, 13.9+45.4, 13.9+75., 13.9+120.4, 13.9+150.9, 13.9+159.4, 13.9+322.};
@@ -37,12 +41,15 @@
   float voltageI1C[9] = { 1.20, 1.27, 1.50, 1.95, 2.54, 1.99, 1.61, 1.17, 1.10 };
   float voltageI1D[9] = { 1.19, 1.26, 1.44, 1.80, 2.47, 1.85, 1.45, 1.27, 1.15 };
 
+  /*
   // Misure prese lasciando stabilizzare. Temp = 19.7
   float voltageI2A[9] = { 1.15, 1.28, 1.77, 2.00, 2.82, 2.04, 1.63, 1.37, 1.10 };
   float voltageI2B[9] = { 1.10, 1.29, 1.50, 1.95, 2.56, 1.93, 1.51, 1.30, 1.15 };
   float voltageI2C[9] = { 1.15, 1.30, 1.60, 1.95, 2.43, 1.98, 1.46, 1.28, 1.18 };
+  */
 
   // -------------------------------------
+  /*
   // Calibrazione: misure prese con viti 
   TGraph *graphSmallA = new TGraph(8, weight, voltageA);
   graphSmallA->SetMarkerStyle(20);
@@ -58,6 +65,7 @@
   graphSmallC->SetMarkerStyle(22);
   graphSmallC->SetMarkerSize(1);
   graphSmallC->SetMarkerColor(4);
+  */
 
   // -------------------------------------
   // Calibrazione: misure prese con oggetti piu' pesanti, temperatura 21.8 gradi
@@ -167,6 +175,8 @@
 
   // -------------------------------------------------------
   // Calibrazione: plot
+
+  /*
   TCanvas cSmall("cSmall","",1);
   cSmall.SetGrid();
   TH2F *myHSmall = new TH2F("myHSmall","Temperature = 21.8",100,10.,65.,100,0.5,2.);
@@ -177,6 +187,7 @@
   graphSmallB->Draw("Psame");
   graphSmallC->Draw("Psame");
   cSmall.SaveAs("smallItems.pdf");
+  */
 
   TCanvas cLarge2("cLarge2","",1);
   cLarge2.SetGrid();
