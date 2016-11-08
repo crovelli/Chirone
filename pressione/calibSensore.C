@@ -31,6 +31,14 @@
   float voltage4C[9] = { 1.19, 1.26, 1.53, 1.77, 1.90, 2.41, 2.67, 2.69, 3.53 };
   float voltage4D[9] = { 1.16, 1.22, 1.43, 1.74, 2.12, 2.46, 2.56, 2.65, 3.50 };
 
+  // misure prese con oggetti piu' pesanti e nuovo setup, temperatura 19.6 gradi (C)
+  // C'e' sempre una tara che non abbiamo pesato e a cui assegno 20
+  float weight5[9]   = { 20., 20.+8.5, 20.+30.5, 20.+30.5+8.5, 20+45.4, 20.+45.4+8.5, 20+75., 20.+75.+8.5, 20.+75.+45.4 };
+  float voltage5A[9] = { 1.16, 1.20, 1.42, 1.54, 1.67, 1.73, 2.00, 2.12, 2.50 };
+  float voltage5B[9] = { 1.12, 1.20, 1.37, 1.48, 1.60, 1.71, 2.00, 2.10, 2.45 };
+  float voltage5C[9] = { 1.16, 1.21, 1.39, 1.51, 1.68, 1.73, 2.08, 2.11, 2.48 };
+  float voltage5D[9] = { 1.12, 1.22, 1.39, 1.50, 1.59, 1.74, 1.98, 2.14, 2.40 };
+
   // -----------------------------------------------------------
   // ISTERESI
   float weightI[9]    = { 13.9, 13.9+8.5, 13.9+8.5+30.5, 13.9+8.5+30.5+45.4, 13.9+8.5+30.5+45.4+75., 13.9+8.5+30.5+45.4, 13.9+8.5+30.5, 13.9+8.5, 13.9 }; 
@@ -47,6 +55,14 @@
   float voltageI2B[9] = { 1.10, 1.29, 1.50, 1.95, 2.56, 1.93, 1.51, 1.30, 1.15 };
   float voltageI2C[9] = { 1.15, 1.30, 1.60, 1.95, 2.43, 1.98, 1.46, 1.28, 1.18 };
   */
+
+  // Misure prese senza lasciar stabilizzare con nuovo setup incollato. Temp = 19.6   
+  // La tara e' diversa, ma lascio 13.9 nei numeri
+  float voltageI3A[9] = { 1.14, 1.18, 1.64, 2.20, 2.71, 2.14, 1.58, 1.22, 1.11 };
+  float voltageI3B[9] = { 1.12, 1.18, 1.49, 1.97, 2.80, 2.06, 1.58, 1.23, 1.09 };
+  float voltageI3C[9] = { 1.11, 1.20, 1.73, 2.14, 2.87, 2.08, 1.69, 1.24, 1.09 };
+  float voltageI3D[9] = { 1.10, 1.21, 1.50, 2.18, 2.72, 2.16, 1.60, 1.20, 1.10 };
+  float voltageI3E[9] = { 1.10, 1.21, 1.59, 1.99, 2.59, 1.99, 1.57, 1.20, 1.10 };
 
   // -------------------------------------
   /*
@@ -171,6 +187,47 @@
   graphLarge4D->SetMarkerSize(1);
   graphLarge4D->SetMarkerColor(3);
 
+
+
+  // -------------------------------------
+  // Calibrazione: misure prese con oggetti piu' pesanti e setup incollato. Temperatura 19.6 gradi
+
+  // Per avere una stima dell'errore sui punti: faccio la dispersione dei punti sulle N misure ad un dato peso
+  cout << endl;
+  cout << "Errore: calib a 19.6 - new setup" << endl;
+  float weight5err[9];
+  float voltage5err[9];
+  for (int ii=0; ii<9; ii++) {
+    TH1F *myH = new TH1F("myH","myH",100,1.,3.7);
+    myH->Fill(voltage5A[ii]);
+    myH->Fill(voltage5B[ii]);
+    myH->Fill(voltage5C[ii]);
+    myH->Fill(voltage5D[ii]);
+    cout << "ii = " << ii << ", mean = " << myH->GetMean() << ", RMS = " << myH->GetRMS() << " ==> " << 100.*myH->GetRMS()/myH->GetMean() << endl;
+    weight5err[ii]  = 0.;
+    voltage5err[ii] = myH->GetRMS()/myH->GetMean();
+    delete myH;
+  }
+
+  TGraphErrors *graphLarge5A = new TGraphErrors(9, weight5, voltage5A, weight5err, voltage5err);
+  graphLarge5A->SetMarkerStyle(20);
+  graphLarge5A->SetMarkerSize(1);
+  graphLarge5A->SetMarkerColor(2);
+
+  TGraphErrors *graphLarge5B = new TGraphErrors(9, weight5, voltage5B, weight5err, voltage5err);
+  graphLarge5B->SetMarkerStyle(21);
+  graphLarge5B->SetMarkerSize(1);
+  graphLarge5B->SetMarkerColor(6);
+
+  TGraphErrors *graphLarge5C = new TGraphErrors(9, weight5, voltage5C, weight5err, voltage5err);
+  graphLarge5C->SetMarkerStyle(22);
+  graphLarge5C->SetMarkerSize(1);
+  graphLarge5C->SetMarkerColor(4);
+
+  TGraphErrors *graphLarge5D = new TGraphErrors(9, weight5, voltage5D, weight5err, voltage5err);
+  graphLarge5D->SetMarkerStyle(23);
+  graphLarge5D->SetMarkerSize(1);
+  graphLarge5D->SetMarkerColor(3);
 
 
   // -------------------------------------------------------
@@ -316,6 +373,55 @@
   cout << "Temp 19.6 => viola : " << graphLarge4B->GetFunction("pol1")->GetParameter("p1") << " +- " << graphLarge4B->GetFunction("pol1")->GetParError(1) << "; R = " << graphLarge4B->GetCorrelationFactor() << endl;
   cout << "Temp 19.6 => blu : "   << graphLarge4C->GetFunction("pol1")->GetParameter("p1") << " +- " << graphLarge4C->GetFunction("pol1")->GetParError(1) << "; R = " << graphLarge4C->GetCorrelationFactor() << endl;
   cout << "Temp 19.6 => verde : " << graphLarge4D->GetFunction("pol1")->GetParameter("p1") << " +- " << graphLarge4D->GetFunction("pol1")->GetParError(1) << "; R = " << graphLarge4D->GetCorrelationFactor() << endl;
+  cout << endl;
+  cout << endl;
+
+
+  TCanvas cLarge5("cLarge5","",1);
+  cLarge5.SetGrid();
+  TH2F *myHLarge5 = new TH2F("myHLarge5","Temperature = 19.6 - new setup",100,0.,360.,100,0.5,4.);
+  myHLarge5->GetXaxis()->SetTitle("weight");
+  myHLarge5->GetYaxis()->SetTitle("Voltage");
+  myHLarge5->Draw();
+  graphLarge5A->Draw("Psame");
+  graphLarge5A->Fit("pol1","","",0,150);
+  graphLarge5A->GetFunction("pol1")->SetLineColor(2);
+  graphLarge5B->Draw("Psame");
+  graphLarge5B->Fit("pol1","","",0,150);
+  graphLarge5B->GetFunction("pol1")->SetLineColor(6);
+  graphLarge5C->Draw("Psame");
+  graphLarge5C->Fit("pol1","","",0,150);
+  graphLarge5C->GetFunction("pol1")->SetLineColor(4);
+  graphLarge5D->Draw("Psame");
+  graphLarge5D->Fit("pol1","","",0,150);
+  graphLarge5D->GetFunction("pol1")->SetLineColor(3);
+  cLarge5.SaveAs("largeItems_temp19d6_newsetup.pdf");
+
+  TH2F *myHLarge5z = new TH2F("myHLarge5z","Temperature = 19.6 - new setup",100,0.,150.,100,0.5,3.);
+  myHLarge5z->GetXaxis()->SetTitle("weight");
+  myHLarge5z->GetYaxis()->SetTitle("Voltage");
+  myHLarge5z->Draw();
+  graphLarge5A->Draw("Psame");
+  graphLarge5A->Fit("pol1","","",0,150);
+  graphLarge5A->GetFunction("pol1")->SetLineColor(2);
+  graphLarge5B->Draw("Psame");
+  graphLarge5B->Fit("pol1","","",0,150);
+  graphLarge5B->GetFunction("pol1")->SetLineColor(6);
+  graphLarge5C->Draw("Psame");
+  graphLarge5C->Fit("pol1","","",0,150);
+  graphLarge5C->GetFunction("pol1")->SetLineColor(4);
+  graphLarge5D->Draw("Psame");
+  graphLarge5D->Fit("pol1","","",0,150);
+  graphLarge5D->GetFunction("pol1")->SetLineColor(3);
+  cLarge5.SaveAs("largeItems_temp19d6_newsetup_zoom.pdf");
+
+  cout << endl;
+  cout << endl;
+  cout << "============================================" << endl;
+  cout << "Temp 19.6 new => rosso : " << graphLarge5A->GetFunction("pol1")->GetParameter("p1") << " +- " << graphLarge5A->GetFunction("pol1")->GetParError(1) << "; R = " << graphLarge5A->GetCorrelationFactor() << endl;
+  cout << "Temp 19.6 new => viola : " << graphLarge5B->GetFunction("pol1")->GetParameter("p1") << " +- " << graphLarge5B->GetFunction("pol1")->GetParError(1) << "; R = " << graphLarge5B->GetCorrelationFactor() << endl;
+  cout << "Temp 19.6 new => blu : "   << graphLarge5C->GetFunction("pol1")->GetParameter("p1") << " +- " << graphLarge5C->GetFunction("pol1")->GetParError(1) << "; R = " << graphLarge5C->GetCorrelationFactor() << endl;
+  cout << "Temp 19.6 new => verde : " << graphLarge5D->GetFunction("pol1")->GetParameter("p1") << " +- " << graphLarge5D->GetFunction("pol1")->GetParError(1) << "; R = " << graphLarge5D->GetCorrelationFactor() << endl;
   cout << endl;
   cout << endl;
 
@@ -474,4 +580,106 @@
   graph2ICb->Draw("Psame");
   cIst2C.SaveAs("isteresiCstab.pdf");
   */
+
+
+  // Senza lasciar stabilizzare - new setup
+  TGraph *graph3IAa = new TGraph(9, weightI, voltageI3A);
+  graph3IAa->SetMarkerStyle(20);
+  graph3IAa->SetMarkerSize(1);
+  graph3IAa->SetMarkerColor(2);
+  float voltageI3DiffA[5] = { (voltageI3A[0]-voltageI3A[8])/voltageI3A[0], (voltageI3A[1]-voltageI3A[7])/voltageI3A[1], (voltageI3A[2]-voltageI3A[6])/voltageI3A[2], (voltageI3A[3]-voltageI3A[5])/voltageI3A[3], 0. };
+  TGraph *graph3IAb = new TGraph(5, weightI, voltageI3DiffA);
+  graph3IAb->SetMarkerStyle(20);
+  graph3IAb->SetMarkerSize(1);
+  graph3IAb->SetMarkerColor(2);
+
+  TGraph *graph3IBa = new TGraph(9, weightI, voltageI3B);
+  graph3IBa->SetMarkerStyle(20);
+  graph3IBa->SetMarkerSize(1);
+  graph3IBa->SetMarkerColor(3);
+  float voltageI3DiffB[5] = { (voltageI3B[0]-voltageI3B[8])/voltageI3B[0], (voltageI3B[1]-voltageI3B[7])/voltageI3B[1], (voltageI3B[2]-voltageI3B[6])/voltageI3B[2], (voltageI3B[3]-voltageI3B[5])/voltageI3B[3], 0. };
+  TGraph *graph3IBb = new TGraph(5, weightI, voltageI3DiffB);
+  graph3IBb->SetMarkerStyle(20);
+  graph3IBb->SetMarkerSize(1);
+  graph3IBb->SetMarkerColor(3);
+
+  TGraph *graph3ICa = new TGraph(9, weightI, voltageI3C);
+  graph3ICa->SetMarkerStyle(20);
+  graph3ICa->SetMarkerSize(1);
+  graph3ICa->SetMarkerColor(4);
+  float voltageI3DiffC[5] = { (voltageI3C[0]-voltageI3C[8])/voltageI3C[0], (voltageI3C[1]-voltageI3C[7])/voltageI3C[1], (voltageI3C[2]-voltageI3C[6])/voltageI3C[2], (voltageI3C[3]-voltageI3C[5])/voltageI3C[3], 0. };
+  TGraph *graph3ICb = new TGraph(5, weightI, voltageI3DiffC);
+  graph3ICb->SetMarkerStyle(20);
+  graph3ICb->SetMarkerSize(1);
+  graph3ICb->SetMarkerColor(4);
+
+  TGraph *graph3IDa = new TGraph(9, weightI, voltageI3D);
+  graph3IDa->SetMarkerStyle(20);
+  graph3IDa->SetMarkerSize(1);
+  graph3IDa->SetMarkerColor(6);
+  float voltageI3DiffD[5] = { (voltageI3D[0]-voltageI3D[8])/voltageI3D[0], (voltageI3D[1]-voltageI3D[7])/voltageI3D[1], (voltageI3D[2]-voltageI3D[6])/voltageI3D[2], (voltageI3D[3]-voltageI3D[5])/voltageI3D[3], 0. };
+  TGraph *graph3IDb = new TGraph(5, weightI, voltageI3DiffD);
+  graph3IDb->SetMarkerStyle(20);
+  graph3IDb->SetMarkerSize(1);
+  graph3IDb->SetMarkerColor(6);
+
+  TGraph *graph3IEa = new TGraph(9, weightI, voltageI3E);
+  graph3IEa->SetMarkerStyle(20);
+  graph3IEa->SetMarkerSize(1);
+  graph3IEa->SetMarkerColor(7);
+  float voltageI3DiffE[5] = { (voltageI3E[0]-voltageI3E[8])/voltageI3E[0], (voltageI3E[1]-voltageI3E[7])/voltageI3E[1], (voltageI3E[2]-voltageI3E[6])/voltageI3E[2], (voltageI3E[3]-voltageI3E[5])/voltageI3E[3], 0. };
+  TGraph *graph3IEb = new TGraph(5, weightI, voltageI3DiffE);
+  graph3IEb->SetMarkerStyle(20);
+  graph3IEb->SetMarkerSize(1);
+  graph3IEb->SetMarkerColor(7);
+
+  TCanvas cIst3A("cIst3A","",1);
+  cIst3A.Divide(1,2);
+  cIst3A.cd(1);
+  myHistIa->Draw();
+  graph3IAa->Draw("Psame");
+  cIst3A.cd(2);
+  myHistIb->Draw();
+  graph3IAb->Draw("Psame");
+  cIst3A.SaveAs("isteresiNewA.pdf");
+
+  TCanvas cIst3B("cIst3B","",1);
+  cIst3B.Divide(1,2);
+  cIst3B.cd(1);
+  myHistIa->Draw();
+  graph3IBa->Draw("Psame");
+  cIst3B.cd(2);
+  myHistIb->Draw();
+  graph3IBb->Draw("Psame");
+  cIst3B.SaveAs("isteresiNewB.pdf");
+
+  TCanvas cIst3C("cIst3C","",1);
+  cIst3C.Divide(1,2);
+  cIst3C.cd(1);
+  myHistIa->Draw();
+  graph3ICa->Draw("Psame");
+  cIst3C.cd(2);
+  myHistIb->Draw();
+  graph3ICb->Draw("Psame");
+  cIst3C.SaveAs("isteresiNewC.pdf");
+
+  TCanvas cIst3D("cIst3D","",1);
+  cIst3D.Divide(1,2);
+  cIst3D.cd(1);
+  myHistIa->Draw();
+  graph3IDa->Draw("Psame");
+  cIst3D.cd(2);
+  myHistIb->Draw();
+  graph3IDb->Draw("Psame");
+  cIst3D.SaveAs("isteresiNewD.pdf");
+
+  TCanvas cIst3E("cIst3E","",1);
+  cIst3E.Divide(1,2);
+  cIst3E.cd(1);
+  myHistIa->Draw();
+  graph3IDa->Draw("Psame");
+  cIst3E.cd(2);
+  myHistIb->Draw();
+  graph3IDb->Draw("Psame");
+  cIst3E.SaveAs("isteresiNewE.pdf");
 }
