@@ -17,14 +17,15 @@
 #include "TH2.h"
 #include "TCanvas.h"
 #include "TGraphErrors.h"
+#include <TLegend.h>
 
 using namespace std;
 
 void counts() {
 
   // to be changed
-  bool isStronzio = true;
-  bool isBario    = false;
+  bool isStronzio = false;
+  bool isBario    = true;
 
   // vectors
   float temp1V[8], temp2V[8];
@@ -76,7 +77,7 @@ void counts() {
     TString temp2Name = TString("H_temp2_")+scintName;    
     float xmin = 2400.;
     float xmax = 3000.;
-    if (isStronzio) { xmin = 2200.; xmax = 3000.; }  // to be changed
+    if (isStronzio) { xmin = 2200.; xmax = 3000.; }  
     if (isBario)    { xmin = 300.;  xmax = 1700.; }   
     TH1F *H_counts = new TH1F(countName,countName,100,xmin, xmax);
     TH1F *H_T1     = new TH1F(temp1Name,temp1Name, 50,22.,30.);
@@ -213,27 +214,38 @@ void counts() {
   myGtemp2pc->SetMarkerSize(0.9);
   myGtemp2pc->SetMarkerStyle(21);
 
+  TLegend *leg = new TLegend(0.60,0.65,0.90,0.90);
+  leg->SetFillColor(kWhite);
+  leg->SetFillStyle(0);
+  leg->SetBorderSize(0);
+  leg->AddEntry(myGmeanmc, "Monocristallino", "lp");
+  leg->AddEntry(myGmeanpc, "Policristallino", "lp");
+
   TH2F *myHG;
   if (isStronzio) myHG = new TH2F("myHG","",100,1.,11.,100,2400.,2750.);
-  if (isBario)    myHG = new TH2F("myHG","",100,1.,11.,100, 300.,1700.);  // to be changed
+  if (isBario)    myHG = new TH2F("myHG","",100,1.,11.,100, 300.,1700.);  
   myHG->GetXaxis()->SetTitle("d [mm]");
   myHG->GetYaxis()->SetTitle("mean");
   TCanvas c4("c4","",1);
   myHG->Draw();
   myGmeanmc->Draw("Psame");
   myGmeanpc->Draw("Psame");
-  c4.SaveAs("trendsMean.png");
+  leg->Draw();
+  if (isStronzio) c4.SaveAs("trendsMeanSrEstesa.png");
+  if (isBario)    c4.SaveAs("trendsMeanBa.png");
 
   TH2F *myHG2;
   if (isStronzio) myHG2 = new TH2F("myHG2","",100,1.,11.,100,40.,60.);
-  if (isBario)    myHG2 = new TH2F("myHG2","",100,1.,11.,100,15.,45.);    // to be changed
+  if (isBario)    myHG2 = new TH2F("myHG2","",100,1.,11.,100,15.,45.);  
   myHG2->GetXaxis()->SetTitle("d [mm]");
   myHG2->GetYaxis()->SetTitle("sigma");
   TCanvas c42("c42","",1);
   myHG2->Draw();
   myGsigmamc->Draw("Psame");
   myGsigmapc->Draw("Psame");
-  c42.SaveAs("trendsSigma.png");
+  leg->Draw();
+  if (isStronzio) c42.SaveAs("trendsSigmaSrEstesa.png");
+  if (isBario)    c42.SaveAs("trendsSigmaBa.png");
 
   TH2F *myHG3 = new TH2F("myHG3","",100,1.,11.,100,22.,30.);
   myHG3->GetXaxis()->SetTitle("d [mm]");
@@ -242,7 +254,9 @@ void counts() {
   myHG3->Draw();
   myGtemp1mc->Draw("Psame");
   myGtemp1pc->Draw("Psame");
-  c43.SaveAs("trendsTemp1.png");
+  leg->Draw();
+  if (isStronzio) c43.SaveAs("trendsTemp1SrEstesa.png");
+  if (isBario)    c43.SaveAs("trendsTemp1Ba.png");
 
   TH2F *myHG4 = new TH2F("myHG4","",100,1.,11.,100,22.,30.);
   myHG4->GetXaxis()->SetTitle("d [mm]");
@@ -251,7 +265,9 @@ void counts() {
   myHG4->Draw();
   myGtemp2mc->Draw("Psame");
   myGtemp2pc->Draw("Psame");
-  c44.SaveAs("trendsTemp2.png");
+  leg->Draw();
+  if (isStronzio) c44.SaveAs("trendsTemp2SrEstesa.png");
+  if (isBario)    c44.SaveAs("trendsTemp2Ba.png");
 
   
   // Saving infos
